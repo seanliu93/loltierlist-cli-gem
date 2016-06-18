@@ -2,6 +2,7 @@ require_relative 'tierlist'
 require_relative 'cli'
 class Loltierlist::Champion
   attr_accessor :name, :url, :role
+  @@all = []
   
   def initialize(name, url, role)
     @name = name
@@ -15,6 +16,11 @@ class Loltierlist::Champion
       pick_rate: nil,
       ban_rate: nil
     }
+    @@all << self
+  end
+
+  def self.all
+    @@all
   end
 
   def champ_hash

@@ -7,15 +7,12 @@ class Loltierlist::CLI
     puts "\n"
     puts "************ League of Legends Current Tier List ****************"
     puts "\n"
-    tierlist = Loltierlist::TierList.new
-    tierlist.get_tiers
-    tierlist.print_tier("tier0")
-    tierlist.print_tier("tier1")
-    tierlist.print_tier("tier2")
-    tierlist.print_tier("tier3")
-    tierlist.print_tier("tier4")
-    tierlist.print_tier("tier5")
-
+    godTier = Loltierlist::TierList.get_tier("god")
+    strongTier = Loltierlist::TierList.get_tier("strong")
+    aboveAverageTier = Loltierlist::TierList.get_tier("above-average")
+    belowAverageTier = Loltierlist::TierList.get_tier("below-average")
+    weakTier = Loltierlist::TierList.get_tier("weak")
+    badTier = Loltierlist::TierList.get_tier("bad")
     input = ""
     while input != "exit" do
       puts "\n\n\n"
@@ -25,45 +22,38 @@ class Loltierlist::CLI
       puts "Enter exit to enter the program"
       input = gets.strip.downcase
       if input == "list"
-        tierlist.print_tier("tier0")
-        tierlist.print_tier("tier1")
-        tierlist.print_tier("tier2")
-        tierlist.print_tier("tier3")
-        tierlist.print_tier("tier4")
-        tierlist.print_tier("tier5")
+        Loltierlist::TierList.all.each do |tier|
+          tier.print_tier
+        end
       elsif input == "list god"
-        tierlist.print_tier("tier0")
+        godTier.print_tier
       elsif input == "list strong"
-        tierlist.print_tier("tier1")
+        strongTier.print_tier
       elsif input == "list above-average"
-        tierlist.print_tier("tier2")
+        aboveAverageTier.print_tier
       elsif input == "list below-average"
-        tierlist.print_tier("tier3")
+        belowAverageTier.print_tier
       elsif input == "list weak"
-        tierlist.print_tier("tier4")
+        weakTier.print_tier
       elsif input == "list bad"
-        tierlist.print_tier("tier5")
+        badTier.print_tier
       elsif input == "exit"
         puts "Goodbye."
-      elsif !lookup_champ(input, tierlist)
+      elsif !lookup_champ(input)
         puts "Bad input!"
       end
     end
 
   end
 
-  def lookup_champ(name, tierlist)
-    tierlist.tier_hash.each {|tier, role_hash|
-      role_hash.each {|role, champs|
-        champs.each {|champ|
-          # allow champ name matches to be case insensitive, and no need for space for multi phrase names
-          if champ.name.downcase == name.gsub(" ","")
-            champ.get_data
-            champ.print_data
-            return true
-          end
-        }
-      }
+  def lookup_champ(name)
+    Loltierlist::Champion.all.each {|champ|
+      # allow champ name matches to be case insensitive, and no need for space for multi phrase names
+      if champ.name.downcase == name.gsub(" ","")
+        champ.get_data
+        champ.print_data
+        return true
+      end
     }
     false
   end
